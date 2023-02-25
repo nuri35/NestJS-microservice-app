@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { SignupDto } from './dto/signup-dto'
 import { AuthService } from './auth.service'
+import { Users } from 'src/entity/users.entity'
+import { Observable } from 'rxjs'
 
 @Controller('auth')
 export class AuthController {
@@ -11,7 +13,10 @@ export class AuthController {
   }
 
   @Post('signup')
-  async signup(@Body() user: SignupDto) {
+  signup(@Body() user: SignupDto): Observable<{
+    user: Users
+    message: string
+  }> {
     return this.authService.signup(user)
   }
 }

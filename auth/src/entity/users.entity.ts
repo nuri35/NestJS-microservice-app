@@ -17,4 +17,7 @@ export class Users {
 
   @Column()
   phone: string
+
+  @Column({ default: false })
+  verify: boolean
 }
