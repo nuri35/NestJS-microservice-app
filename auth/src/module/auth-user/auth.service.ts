@@ -52,6 +52,7 @@ export class AuthService {
               }),
             ).pipe(
               map((user: Users) => {
+                // mail service you should use rabbitmq
                 return {
                   user,
                   message:
@@ -59,6 +60,30 @@ export class AuthService {
                 }
               }),
             )
+          }),
+        )
+      }),
+    )
+  }
+
+  signin(user: SignupDto): Observable<Users> {
+    const { email, password } = user
+
+    return from(
+      this.usersRepository.findOne({
+        where: {
+          email,
+        },
+      }),
+    ).pipe(
+      switchMap((user: Users) => {
+        if (!user) throw new BadRequestException('Invalid credentials')
+
+        return from(bcrypt.compare(password, user.password)).pipe(
+          switchMap((isMatch: boolean) => {
+            if (!isMatch) throw new BadRequestException('Invalid credentials')
+
+            return of(user)
           }),
         )
       }),
